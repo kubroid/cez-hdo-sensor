@@ -1,0 +1,12 @@
+{
+  "name": "CEZ HDO Sensor",
+  "config_flow": true,
+  "documentation": "https://github.com/kubroid/cez-hdo-sensor",
+  "issue_tracker": "https://github.com/kubroid/cez-hdo-sensor/issues",
+  "domain": "cez_hdo",
+  "homeassistant": "2023.1.0",
+  "iot_class": "Cloud Polling",
+  "version": "1.1.0",
+  "dependencies": [],
+  "requirements": ["aiohttp"]
+}

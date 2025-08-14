@@ -1,0 +1,10 @@
+{
+  "domain": "cez_hdo",
+  "name": "CEZ HDO Sensor",
+  "documentation": "https://github.com/your-username/cez-hdo-sensor",
+  "dependencies": [],
+  "codeowners": ["@your-username"],
+  "requirements": ["aiohttp"],
+  "version": "1.0.0",
+  "iot_class": "cloud_polling"
+}
