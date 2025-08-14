@@ -1,5 +1,8 @@
 # CEZ HDO Sensor for Home Assistant
 
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![GitHub release](https://img.shields.io/github/release/kubroid/cez-hdo-sensor.svg)](https://github.com/kubroid/cez-hdo-sensor/releases)
+
 Этот пользовательский компонент для Home Assistant позволяет мониторить состояние HDO (Hromadné dálkové ovládání) сигналов от ČEZ Distribuce. Компонент создает бинарный сенсор, который показывает, активен ли сейчас низкий тариф.
 
 ## Особенности
@@ -65,7 +68,7 @@ automation:
   - alias: "Turn on water heater during low tariff"
     trigger:
       - platform: state
-        entity_id: binary_sensor.cez_hdo_859182400123456789
+        entity_id: binary_sensor.cez_hdo_123456789012345678
         to: "on"
     action:
       - service: switch.turn_on
@@ -75,7 +78,7 @@ automation:
   - alias: "Turn off water heater when low tariff ends"
     trigger:
       - platform: state
-        entity_id: binary_sensor.cez_hdo_859182400123456789
+        entity_id: binary_sensor.cez_hdo_123456789012345678
         to: "off"
     action:
       - service: switch.turn_off
