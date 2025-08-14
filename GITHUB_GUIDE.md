@@ -50,7 +50,7 @@ cez-hdo-sensor/
 #### 2. Загрузите файлы
 ```bash
 # Клонируйте пустой репозиторий
-git clone https://github.com/your-username/cez-hdo-sensor.git
+git clone https://github.com/kubroid/cez-hdo-sensor.git
 cd cez-hdo-sensor
 
 # Скопируйте файлы из нашего проекта
@@ -102,17 +102,17 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
 
 ### Для HACS:
 ```
-https://github.com/your-username/cez-hdo-sensor
+https://github.com/kubroid/cez-hdo-sensor
 ```
 
 ### Для скачивания:
 ```
-https://github.com/your-username/cez-hdo-sensor/archive/main.zip
+https://github.com/kubroid/cez-hdo-sensor/archive/main.zip
 ```
 
 ### Документация:
 ```
-https://github.com/your-username/cez-hdo-sensor/blob/main/INSTALLATION.md
+https://github.com/kubroid/cez-hdo-sensor/blob/main/INSTALLATION.md
 ```
 
 ## ✅ Проверочный список перед загрузкой:

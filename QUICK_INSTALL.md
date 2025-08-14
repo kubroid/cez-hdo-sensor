@@ -5,7 +5,7 @@
 ### 1. Добавить репозиторий в HACS
 1. Откройте **HACS** → **Integrations**
 2. Нажмите **⋮** (три точки) → **Custom repositories**
-3. Введите URL: `https://github.com/your-username/cez-hdo-sensor`
+3. Введите URL: `https://github.com/kubroid/cez-hdo-sensor`
 4. Категория: **Integration**
 5. Нажмите **Add**
 
@@ -28,7 +28,7 @@
 
 ### 1. Скачать файлы
 ```bash
-wget https://github.com/your-username/cez-hdo-sensor/archive/main.zip
+wget https://github.com/kubroid/cez-hdo-sensor/archive/main.zip
 unzip main.zip
 ```
 
@@ -102,4 +102,4 @@ automation:
 2. **Не обновляется** → Проверьте интернет
 3. **Неправильный сигнал** → Попробуйте другой сигнал
 
-**Поддержка**: [GitHub Issues](https://github.com/your-username/cez-hdo-sensor/issues)
+**Поддержка**: [GitHub Issues](https://github.com/kubroid/cez-hdo-sensor/issues)

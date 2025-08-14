@@ -12,7 +12,7 @@
    - Перейдите в раздел "Integrations" 
    - Нажмите на три точки (⋮) в правом верхнем углу
    - Выберите "Custom repositories"
-   - Добавьте URL: `https://github.com/your-username/cez-hdo-sensor`
+   - Добавьте URL: `https://github.com/kubroid/cez-hdo-sensor`
    - Выберите категорию: "Integration"
    - Нажмите "ADD"
 
@@ -25,7 +25,7 @@
 
 1. **Скачайте архив** с GitHub:
    ```bash
-   wget https://github.com/your-username/cez-hdo-sensor/archive/main.zip
+   wget https://github.com/kubroid/cez-hdo-sensor/archive/main.zip
    unzip main.zip
    ```
 
@@ -137,7 +137,7 @@ automation:
 
 ```bash
 # Загрузите тестовые скрипты
-wget https://github.com/your-username/cez-hdo-sensor/raw/main/test_api.py
+wget https://github.com/kubroid/cez-hdo-sensor/raw/main/test_api.py
 
 # Протестируйте с вашим EAN
 python3 test_api.py ВАШ_EAN_КОД a3b4dp01
@@ -163,6 +163,6 @@ python3 test_api.py ВАШ_EAN_КОД a3b4dp01
 ## 🆘 Поддержка
 
 Если возникли проблемы:
-1. Создайте issue в [GitHub репозитории](https://github.com/your-username/cez-hdo-sensor/issues)
+1. Создайте issue в [GitHub репозитории](https://github.com/kubroid/cez-hdo-sensor/issues)
 2. Приложите логи Home Assistant
 3. Укажите версию Home Assistant и способ установки

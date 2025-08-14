@@ -28,7 +28,7 @@
 4. Выберите **Custom repositories**
 5. В поле **Repository** введите:
    ```
-   https://github.com/your-username/cez-hdo-sensor
+   https://github.com/kubroid/cez-hdo-sensor
    ```
 6. В **Category** выберите **Integration**
 7. Нажмите **ADD**
@@ -60,11 +60,11 @@
 #### 1️⃣ Скачивание
 ```bash
 # Вариант 1: wget
-wget https://github.com/your-username/cez-hdo-sensor/archive/main.zip
+wget https://github.com/kubroid/cez-hdo-sensor/archive/main.zip
 unzip main.zip
 
 # Вариант 2: git clone
-git clone https://github.com/your-username/cez-hdo-sensor.git
+git clone https://github.com/kubroid/cez-hdo-sensor.git
 ```
 
 #### 2️⃣ Копирование файлов
@@ -143,8 +143,8 @@ git init
 git add .
 git commit -m "Initial release v1.1.0 - CEZ HDO Sensor with signal selection"
 
-# Привяжите к GitHub (замените your-username)
-git remote add origin https://github.com/your-username/cez-hdo-sensor.git
+# Привяжите к GitHub (замените kubroid)
+git remote add origin https://github.com/kubroid/cez-hdo-sensor.git
 git branch -M main
 git push -u origin main
 ```
@@ -164,7 +164,7 @@ git push -u origin main
 - 📱 Binary sensor with detailed attributes
 
 ## 🔧 Installation
-- Via HACS: Add custom repository `https://github.com/your-username/cez-hdo-sensor`
+- Via HACS: Add custom repository `https://github.com/kubroid/cez-hdo-sensor`
 - Manual: Download and copy to `custom_components/cez_hdo/`
 
 See [INSTALLATION.md](INSTALLATION.md) for detailed instructions.
@@ -273,7 +273,7 @@ EAN код можно найти:
 ### Тестирование перед установкой
 ```bash
 # Скачайте тестовый скрипт
-wget https://github.com/your-username/cez-hdo-sensor/raw/main/tests/test_api.py
+wget https://github.com/kubroid/cez-hdo-sensor/raw/main/tests/test_api.py
 
 # Протестируйте с вашим EAN
 python3 test_api.py ВАШ_EAN_КОД a3b4dp01
@@ -283,9 +283,9 @@ python3 test_api.py ВАШ_EAN_КОД a3b4dp01
 
 ## 🆘 Поддержка
 
-**GitHub**: [Issues](https://github.com/your-username/cez-hdo-sensor/issues)
-**Документация**: [README.md](https://github.com/your-username/cez-hdo-sensor)
-**Быстрая помощь**: [QUICK_INSTALL.md](https://github.com/your-username/cez-hdo-sensor/blob/main/QUICK_INSTALL.md)
+**GitHub**: [Issues](https://github.com/kubroid/cez-hdo-sensor/issues)
+**Документация**: [README.md](https://github.com/kubroid/cez-hdo-sensor)
+**Быстрая помощь**: [QUICK_INSTALL.md](https://github.com/kubroid/cez-hdo-sensor/blob/main/QUICK_INSTALL.md)
 
 При создании issue приложите:
 - Версию Home Assistant

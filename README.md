@@ -19,7 +19,7 @@
 1. Откройте HACS в Home Assistant
 2. Перейдите в "Integrations"
 3. Нажмите на три точки в правом верхнем углу и выберите "Custom repositories"
-4. Добавьте URL этого репозитория: `https://github.com/your-username/cez-hdo-sensor`
+4. Добавьте URL этого репозитория: `https://github.com/kubroid/cez-hdo-sensor`
 5. Выберите категорию "Integration"
 6. Найдите "CEZ HDO Sensor" в списке и установите
 
