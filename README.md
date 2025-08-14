@@ -15,18 +15,22 @@
 - **Простая настройка**: Настройка через UI Home Assistant
 - **Многоязычность**: Поддержка русского, английского и чешского языков
 
-## Установка
+## 📦 Установка
 
-### Через HACS (рекомендуется)
+### 🏆 Через HACS (рекомендуется)
 
-1. Откройте HACS в Home Assistant
-2. Перейдите в "Integrations"
-3. Нажмите на три точки в правом верхнем углу и выберите "Custom repositories"
-4. Добавьте URL этого репозитория: `https://github.com/kubroid/cez-hdo-sensor`
-5. Выберите категорию "Integration"
+⚠️ **КРИТИЧЕСКИ ВАЖНО**: Добавляйте как **Integration**, НЕ как Add-on!
+
+1. Откройте **HACS** в Home Assistant (боковое меню)
+2. Перейдите во вкладку **"Integrations"**
+3. Нажмите **⋮** (три точки справа вверху) → **"Custom repositories"**
+4. Добавьте URL: `https://github.com/kubroid/cez-hdo-sensor`
+5. Категория: **Integration** (НЕ Add-on!)
 6. Найдите "CEZ HDO Sensor" в списке и установите
 
-### Ручная установка
+🚨 **Если видите ошибку "not a valid add-on repository"** - читайте [QUICK_FIX_ADD_ON_ERROR.md](QUICK_FIX_ADD_ON_ERROR.md)
+
+### 📁 Ручная установка
 
 1. Скопируйте папку `cez_hdo` в директорию `custom_components` вашего Home Assistant
 2. Перезапустите Home Assistant

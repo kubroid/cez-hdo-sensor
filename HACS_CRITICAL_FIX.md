@@ -41,12 +41,62 @@ git push origin main
 
 ### 3. 🔄 Добавьте в HACS (после создания релиза!):
 
-1. В Home Assistant откройте **HACS → Integrations**
-2. Нажмите **⋮** (три точки) → **Custom repositories**
-3. **Repository**: `https://github.com/kubroid/cez-hdo-sensor`
-4. **Category**: **Integration** (НЕ Add-on!)
+⚠️ **КРИТИЧЕСКИ ВАЖНО**: Это НЕ Add-on для Supervisor! Это Custom Integration для HACS! ⚠️
+
+**🚨 НЕ ПУТАЙТЕ ЭТИ РАЗДЕЛЫ**:
+- ❌ **Настройки → Дополнения** (Add-ons для Supervisor)
+- ✅ **HACS → Integrations** (пользовательские интеграции)
+
+**Правильная последовательность**:
+1. Откройте **HACS** в боковом меню Home Assistant
+2. Выберите вкладку **"Integrations"** (НЕ "Frontend" или другие!)
+3. Нажмите **⋮** (три точки справа вверху) → **"Custom repositories"**
+4. Заполните форму:
+   - **Repository**: `https://github.com/kubroid/cez-hdo-sensor`
+   - **Category**: **Integration** (обязательно выберите именно "Integration"!)
 5. Нажмите **"ADD"**
+6. Найдите "CEZ HDO Sensor" в списке интеграций и нажмите **"DOWNLOAD"**
+
+🚨 **ЕСЛИ ВИДИТЕ ОШИБКУ**: "not a valid add-on repository" - значит вы добавляете в неправильном месте!
+
+### 📱 Визуальная инструкция:
+
+**ШАГ 1**: Откройте HACS (в боковом меню, не в настройках!)
+```
+Home Assistant → Боковое меню → HACS
+```
+
+**ШАГ 2**: Выберите раздел Integrations
+```
+HACS → [Integrations] [Frontend] [Python Scripts] [Themes]
+          ↑ ЭТО!
+```
+
+**ШАГ 3**: Добавьте репозиторий
+```
+Integrations → ⋮ (три точки) → Custom repositories
+```
+
+**ШАГ 4**: Заполните форму
+```
+Repository: https://github.com/kubroid/cez-hdo-sensor
+Category: Integration ← ОБЯЗАТЕЛЬНО!
+```
 6. Найдите "CEZ HDO Sensor" и установите
+
+🚨 **ЧАСТЫЕ ОШИБКИ И РЕШЕНИЯ**:
+
+**Ошибка**: "not a valid add-on repository"
+**Причина**: Вы добавляете в разделе Add-ons вместо HACS Integrations
+**Решение**: Идите в HACS → Integrations, НЕ в Настройки → Дополнения
+
+**Ошибка**: "Repository structure for v1.1.0 is not compliant"
+**Причина**: Нет релиза или неправильная структура
+**Решение**: Создайте релиз с тегом v1.1.0 в GitHub
+
+**Ошибка**: Репозиторий не найден
+**Причина**: Опечатка в URL или репозиторий приватный
+**Решение**: Убедитесь что URL точный и репозиторий публичный
 
 ### 4. ⚠️ Если все еще не работает:
 
