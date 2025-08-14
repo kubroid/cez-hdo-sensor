@@ -73,9 +73,19 @@ class CezHdoBinarySensor(CoordinatorEntity[CezHdoCoordinator], BinarySensorEntit
         
         attrs = {
             "ean": self._ean,
+            "signal": self.coordinator.signal,
             "current_period": self.coordinator.data.get("current_period"),
             "next_switch": self.coordinator.data.get("next_switch"),
         }
+        
+        # Add schedule update information
+        schedule_update = self.coordinator.data.get("schedule_last_update")
+        if schedule_update:
+            attrs["schedule_last_update"] = schedule_update.strftime("%Y-%m-%d %H:%M:%S")
+            # Calculate age in minutes
+            from datetime import datetime
+            now = datetime.now()
+            attrs["schedule_age_minutes"] = int((now - schedule_update).total_seconds() / 60)
         
         # Add today's switches
         switches = self.coordinator.data.get("today_switches", [])
@@ -83,7 +93,7 @@ class CezHdoBinarySensor(CoordinatorEntity[CezHdoCoordinator], BinarySensorEntit
             attrs["today_switches_count"] = len(switches)
             attrs["switches_today"] = [
                 {
-                    "time": switch["time"].strftime("%H:%M"),
+                    "time": switch["time"].strftime("%H:%M") if hasattr(switch["time"], "strftime") else str(switch["time"]),
                     "state": "low_tariff" if switch["state"] else "normal_tariff"
                 }
                 for switch in switches

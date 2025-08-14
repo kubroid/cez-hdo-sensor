@@ -53,7 +53,7 @@ class CezHdoApi:
             return {}
 
     def _parse_response(self, data: dict[str, Any]) -> dict[str, Any]:
-        """Parse the API response."""
+        """Parse the API response for new CEZ format."""
         result = {
             "is_low_tariff": False,
             "next_switch": None,
@@ -62,74 +62,91 @@ class CezHdoApi:
         }
         
         try:
-            # Extract signals data
-            signals_data = data.get("data", {}).get("signals", [])
+            # New CEZ API format: data.datum.casy[signal].casy
             now = datetime.now()
             today = now.date()
-            today_str = today.strftime("%d.%m.%Y")
             
-            _LOGGER.debug("Looking for signal '%s' on date '%s'", self.signal, today_str)
-            _LOGGER.debug("Found %d signal entries in response", len(signals_data))
+            _LOGGER.debug("Parsing CEZ API response for signal '%s'", self.signal)
             
-            # Find today's schedule for our signal
-            today_schedule = None
-            for signal_entry in signals_data:
-                if (signal_entry.get("signal") == self.signal and 
-                    signal_entry.get("datum") == today_str):
-                    today_schedule = signal_entry.get("casy", "")
-                    _LOGGER.debug("Found schedule for %s: %s", self.signal, today_schedule)
-                    break
-            
-            if not today_schedule:
-                _LOGGER.warning("No schedule found for signal '%s' on %s", self.signal, today_str)
+            # Navigate to signals data in new format
+            datum_data = data.get("data", {}).get("datum", {})
+            if not datum_data:
+                _LOGGER.warning("No 'datum' data found in API response")
                 return result
             
-            # Parse time ranges (format: "00:00-05:35;   06:30-08:55;   09:54-15:16")
-            today_switches = []
-            time_ranges = [r.strip() for r in today_schedule.split(';') if r.strip()]
+            casy_data = datum_data.get("casy", [])
+            if not casy_data:
+                _LOGGER.warning("No 'casy' data found in API response")
+                return result
             
-            _LOGGER.debug("Parsing %d time ranges", len(time_ranges))
+            _LOGGER.debug("Found %d signal entries in casy data", len(casy_data))
+            
+            # Find our signal in the casy array
+            signal_data = None
+            for signal_entry in casy_data:
+                if signal_entry.get("signal") == self.signal:
+                    signal_data = signal_entry
+                    _LOGGER.debug("Found signal '%s' in response", self.signal)
+                    break
+            
+            if not signal_data:
+                _LOGGER.warning("Signal '%s' not found in API response", self.signal)
+                return result
+            
+            # Get time ranges from signal data
+            time_ranges = signal_data.get("casy", [])
+            if not time_ranges:
+                _LOGGER.warning("No time ranges found for signal '%s'", self.signal)
+                return result
+            
+            _LOGGER.debug("Found %d time ranges for signal '%s'", len(time_ranges), self.signal)
+            
+            # Parse time ranges
+            today_switches = []
             
             for time_range in time_ranges:
-                if '-' in time_range:
-                    try:
-                        start_str, end_str = time_range.split('-')
-                        start_str = start_str.strip()
-                        end_str = end_str.strip()
-                        
-                        # Parse start time
-                        start_hour, start_min = map(int, start_str.split(':'))
-                        start_datetime = datetime.combine(today, time(start_hour, start_min))
-                        
-                        # Parse end time
-                        end_hour, end_min = map(int, end_str.split(':'))
-                        
-                        # Handle midnight crossing (24:00 becomes next day 00:00)
-                        if end_hour == 24:
-                            end_datetime = datetime.combine(today + timedelta(days=1), time(0, 0))
-                        elif end_hour == 0 and start_hour > 12:  # Midnight crossing
-                            end_datetime = datetime.combine(today + timedelta(days=1), time(0, end_min))
-                        else:
-                            end_datetime = datetime.combine(today, time(end_hour, end_min))
-                        
-                        # Add switches: ON at start, OFF at end
-                        today_switches.append({
-                            "time": start_datetime,
-                            "state": True  # LOW TARIFF ON
-                        })
-                        today_switches.append({
-                            "time": end_datetime,
-                            "state": False  # LOW TARIFF OFF
-                        })
-                        
-                        _LOGGER.debug("Time range %s-%s: ON at %s, OFF at %s", 
-                                    start_str, end_str, 
-                                    start_datetime.strftime('%H:%M'), 
-                                    end_datetime.strftime('%H:%M'))
-                        
-                    except (ValueError, TypeError) as err:
-                        _LOGGER.warning("Could not parse time range '%s': %s", time_range, err)
-                        continue
+                start_time_str = time_range.get("od")  # "from" time
+                end_time_str = time_range.get("do")    # "to" time
+                
+                if not start_time_str or not end_time_str:
+                    _LOGGER.warning("Invalid time range: %s", time_range)
+                    continue
+                
+                try:
+                    # Parse start time
+                    start_hour, start_min = map(int, start_time_str.split(':'))
+                    start_datetime = datetime.combine(today, time(start_hour, start_min))
+                    
+                    # Parse end time
+                    end_hour, end_min = map(int, end_time_str.split(':'))
+                    
+                    # Handle midnight crossing (24:00 becomes next day 00:00)
+                    if end_hour == 24:
+                        end_datetime = datetime.combine(today + timedelta(days=1), time(0, 0))
+                    elif end_hour == 0 and start_hour > 12:  # Midnight crossing
+                        end_datetime = datetime.combine(today + timedelta(days=1), time(0, end_min))
+                    else:
+                        end_datetime = datetime.combine(today, time(end_hour, end_min))
+                    
+                    # Add switches: ON at start, OFF at end
+                    today_switches.append({
+                        "time": start_datetime,
+                        "state": True  # LOW TARIFF ON
+                    })
+                    today_switches.append({
+                        "time": end_datetime,
+                        "state": False  # LOW TARIFF OFF
+                    })
+                    
+                    _LOGGER.debug("Time range %s-%s: ON at %s, OFF at %s", 
+                                start_time_str, end_time_str, 
+                                start_datetime.strftime('%H:%M'), 
+                                end_datetime.strftime('%H:%M'))
+                    
+                except (ValueError, TypeError) as err:
+                    _LOGGER.warning("Could not parse time range %s-%s: %s", 
+                                  start_time_str, end_time_str, err)
+                    continue
             
             # Sort switches by time
             today_switches.sort(key=lambda x: x["time"])
@@ -154,6 +171,7 @@ class CezHdoApi:
                 
         except (KeyError, ValueError, TypeError) as err:
             _LOGGER.error("Error parsing API response: %s", err)
+            _LOGGER.debug("Full API response: %s", data)
         
         return result
 
