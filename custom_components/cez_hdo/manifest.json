@@ -1,12 +1,13 @@
 {
   "domain": "cez_hdo",
   "name": "CEZ HDO Sensor",
-  "documentation": "https://github.com/kubroid/cez-hdo-sensor",
+  "documentation": "https://github.com/kubroid/cez-hdo-sensor/tree/builtin-integration",
   "issue_tracker": "https://github.com/kubroid/cez-hdo-sensor/issues",
   "dependencies": [],
   "codeowners": ["@kubroid"],
   "requirements": ["aiohttp>=3.8.0"],
   "config_flow": true,
-  "version": "1.1.0",
-  "iot_class": "cloud_polling"
+  "version": "2.0.0",
+  "iot_class": "cloud_polling",
+  "integration_type": "device"
 }
