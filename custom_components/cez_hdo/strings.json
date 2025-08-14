@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up CEZ HDO sensor",
+        "description": "Enter the EAN code of your electricity meter and select HDO signal",
+        "data": {
+          "ean": "EAN Code",
+          "signal": "HDO Signal"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to ČEZ API",
+      "invalid_ean": "Invalid EAN code",
+      "unknown": "Unexpected error occurred"
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  }
+}

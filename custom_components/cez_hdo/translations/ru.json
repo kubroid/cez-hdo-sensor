@@ -1,0 +1,24 @@
+{
+  "cez_hdo": {
+    "title": "CEZ HDO Sensor",
+    "config": {
+      "step": {
+        "user": {
+          "title": "Настройка CEZ HDO сенсора",
+          "description": "Введите EAN код вашего счетчика электроэнергии",
+          "data": {
+            "ean": "EAN код"
+          }
+        }
+      },
+      "error": {
+        "cannot_connect": "Не удалось подключиться к API ČEZ",
+        "invalid_ean": "Неверный EAN код",
+        "unknown": "Неожиданная ошибка"
+      },
+      "abort": {
+        "already_configured": "Устройство уже настроено"
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "cez_hdo": {
+    "title": "CEZ HDO Senzor",
+    "config": {
+      "step": {
+        "user": {
+          "title": "Nastavení CEZ HDO senzoru",
+          "description": "Zadejte EAN kód vašeho elektroměru",
+          "data": {
+            "ean": "EAN kód"
+          }
+        }
+      },
+      "error": {
+        "cannot_connect": "Nepodařilo se připojit k API ČEZ",
+        "invalid_ean": "Neplatný EAN kód",
+        "unknown": "Došlo k neočekávané chybě"
+      },
+      "abort": {
+        "already_configured": "Zařízení je již nakonfigurováno"
+      }
+    }
+  }
+}
