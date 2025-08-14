@@ -12,7 +12,7 @@ DEFAULT_SCAN_INTERVAL = 3600  # 1 hour in seconds
 DEFAULT_SIGNAL = "a3b4dp01"
 
 # Available signals
-AVAILABLE_SIGNALS = ["a3b4dp01", "a3b4dp02", "a3b4dp06"]
+AVAILABLE_SIGNALS = ["a3b4dp01", "a3b4dp02", "a3b4dp06", "error"]
 
 # API
 CEZ_API_URL = "https://dip.cezdistribuce.cz/irj/portal/anonymous/casy-spinani"

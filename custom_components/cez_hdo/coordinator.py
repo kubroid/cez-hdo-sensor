@@ -36,7 +36,14 @@ class CezHdoCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             # Get schedule data from API
             schedule_data = await self.api.async_get_data()
             if not schedule_data:
-                raise UpdateFailed("No data received from CEZ API")
+                _LOGGER.error("No data received from CEZ API - using error state")
+                return self._get_error_state("No data received from CEZ API")
+            
+            # Check if we received error state from API
+            if schedule_data.get("error_mode"):
+                _LOGGER.warning("API returned error state: %s", 
+                              schedule_data.get("error_message", "Unknown error"))
+                return schedule_data  # Return error state as-is
             
             # Compute current state based on schedule
             now = datetime.now()
@@ -46,7 +53,20 @@ class CezHdoCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             
         except Exception as err:
             _LOGGER.error("Error in coordinator update: %s", err)
-            raise UpdateFailed(f"Error communicating with API: {err}") from err
+            # Return error state instead of raising exception
+            return self._get_error_state(f"Error communicating with API: {err}")
+
+    def _get_error_state(self, error_message: str) -> dict[str, Any]:
+        """Return error state with low tariff for safety."""
+        _LOGGER.warning("Returning error state with low tariff: %s", error_message)
+        return {
+            "is_low_tariff": True,  # Low tariff for safety
+            "next_switch": None,
+            "current_period": "low_tariff",
+            "today_switches": [],
+            "error_mode": True,
+            "error_message": error_message
+        }
 
     def _compute_current_state(self, schedule_data: dict[str, Any], now: datetime) -> dict[str, Any]:
         """Compute current HDO state based on schedule data."""

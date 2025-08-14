@@ -25,6 +25,17 @@ class CezHdoApi:
 
     async def async_get_data(self) -> dict[str, Any]:
         """Get HDO data from CEZ API."""
+        # Special handling for error signal - always return low tariff
+        if self.signal == "error":
+            _LOGGER.info("Error signal selected - returning low tariff state")
+            return {
+                "is_low_tariff": True,
+                "next_switch": None,
+                "current_period": "low_tariff",
+                "today_switches": [],
+                "error_mode": True
+            }
+        
         url = f"{CEZ_API_URL}?path={CEZ_API_ENDPOINT}"
         payload = {"ean": self.ean}
         
@@ -40,17 +51,32 @@ class CezHdoApi:
             ) as response:
                 if response.status != 200:
                     _LOGGER.error("API request failed with status %d", response.status)
-                    return {}
+                    return self._get_error_state("API request failed")
                 
                 data = await response.json()
                 return self._parse_response(data)
                 
         except aiohttp.ClientError as err:
             _LOGGER.error("Error fetching data from CEZ API: %s", err)
-            return {}
+            return self._get_error_state(f"Network error: {err}")
         except json.JSONDecodeError as err:
             _LOGGER.error("Error decoding JSON response: %s", err)
-            return {}
+            return self._get_error_state(f"JSON decode error: {err}")
+        except Exception as err:
+            _LOGGER.error("Unexpected error: %s", err)
+            return self._get_error_state(f"Unexpected error: {err}")
+
+    def _get_error_state(self, error_message: str) -> dict[str, Any]:
+        """Return error state with low tariff for safety."""
+        _LOGGER.warning("Returning error state with low tariff: %s", error_message)
+        return {
+            "is_low_tariff": True,  # Low tariff for safety
+            "next_switch": None,
+            "current_period": "low_tariff",
+            "today_switches": [],
+            "error_mode": True,
+            "error_message": error_message
+        }
 
     def _parse_response(self, data: dict[str, Any]) -> dict[str, Any]:
         """Parse the API response for real CEZ format."""
@@ -87,13 +113,13 @@ class CezHdoApi:
             
             if not today_signal_data:
                 _LOGGER.warning("Today's data for signal '%s' not found", self.signal)
-                return result
+                return self._get_error_state(f"Signal '{self.signal}' not found in API response")
             
             # Parse time ranges from casy string
             casy_string = today_signal_data.get("casy", "")
             if not casy_string:
                 _LOGGER.warning("No time ranges found for signal '%s'", self.signal)
-                return result
+                return self._get_error_state(f"No schedule data for signal '{self.signal}'")
             
             _LOGGER.debug("Raw casy string: '%s'", casy_string)
             
@@ -171,6 +197,10 @@ class CezHdoApi:
         except (KeyError, ValueError, TypeError) as err:
             _LOGGER.error("Error parsing API response: %s", err)
             _LOGGER.debug("Full API response: %s", data)
+            return self._get_error_state(f"Failed to parse API response: {err}")
+        except Exception as err:
+            _LOGGER.error("Unexpected error during parsing: %s", err)
+            return self._get_error_state(f"Unexpected parsing error: {err}")
         
         return result
 

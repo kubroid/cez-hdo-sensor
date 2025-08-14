@@ -78,6 +78,14 @@ class CezHdoBinarySensor(CoordinatorEntity[CezHdoCoordinator], BinarySensorEntit
             "next_switch": self.coordinator.data.get("next_switch"),
         }
         
+        # Check for error mode
+        if self.coordinator.data.get("error_mode"):
+            attrs["error_mode"] = True
+            attrs["error_message"] = self.coordinator.data.get("error_message", "Unknown error")
+            attrs["safety_mode"] = "low_tariff_activated"
+        else:
+            attrs["error_mode"] = False
+        
         # Add schedule update information
         schedule_update = self.coordinator.data.get("schedule_last_update")
         if schedule_update:
@@ -104,4 +112,5 @@ class CezHdoBinarySensor(CoordinatorEntity[CezHdoCoordinator], BinarySensorEntit
     @property
     def available(self) -> bool:
         """Return if entity is available."""
-        return self.coordinator.last_update_success
+        # Entity is always available, even in error mode
+        return True
