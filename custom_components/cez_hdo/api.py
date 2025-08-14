@@ -25,17 +25,6 @@ class CezHdoApi:
 
     async def async_get_data(self) -> dict[str, Any]:
         """Get HDO data from CEZ API."""
-        # Special handling for error signal - always return low tariff
-        if self.signal == "error":
-            _LOGGER.info("Error signal selected - returning low tariff state")
-            return {
-                "is_low_tariff": True,
-                "next_switch": None,
-                "current_period": "low_tariff",
-                "today_switches": [],
-                "error_mode": True
-            }
-        
         url = f"{CEZ_API_URL}?path={CEZ_API_ENDPOINT}"
         payload = {"ean": self.ean}
         
