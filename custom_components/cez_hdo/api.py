@@ -53,80 +53,78 @@ class CezHdoApi:
             return {}
 
     def _parse_response(self, data: dict[str, Any]) -> dict[str, Any]:
-        """Parse the API response for new CEZ format."""
+        """Parse the API response for real CEZ format."""
         result = {
             "is_low_tariff": False,
             "next_switch": None,
-            "current_period": None,
+            "current_period": "normal_tariff",
             "today_switches": []
         }
         
         try:
-            # New CEZ API format: data.datum.casy[signal].casy
             now = datetime.now()
             today = now.date()
+            today_str = today.strftime("%d.%m.%Y")
             
-            _LOGGER.debug("Parsing CEZ API response for signal '%s'", self.signal)
+            _LOGGER.debug("Parsing CEZ API response for signal '%s', today: %s", self.signal, today_str)
             
-            # Navigate to signals data in new format
-            datum_data = data.get("data", {}).get("datum", {})
-            if not datum_data:
-                _LOGGER.warning("No 'datum' data found in API response")
+            # Real CEZ API format: data.signals[] with signal, den, datum, casy
+            signals_data = data.get("data", {}).get("signals", [])
+            if not signals_data:
+                _LOGGER.warning("No 'signals' data found in API response")
                 return result
             
-            casy_data = datum_data.get("casy", [])
-            if not casy_data:
-                _LOGGER.warning("No 'casy' data found in API response")
-                return result
+            _LOGGER.debug("Found %d signal entries", len(signals_data))
             
-            _LOGGER.debug("Found %d signal entries in casy data", len(casy_data))
-            
-            # Find our signal in the casy array
-            signal_data = None
-            for signal_entry in casy_data:
-                if signal_entry.get("signal") == self.signal:
-                    signal_data = signal_entry
-                    _LOGGER.debug("Found signal '%s' in response", self.signal)
+            # Find today's data for our signal
+            today_signal_data = None
+            for signal_entry in signals_data:
+                if (signal_entry.get("signal") == self.signal and 
+                    signal_entry.get("datum") == today_str):
+                    today_signal_data = signal_entry
+                    _LOGGER.debug("Found today's data for signal '%s'", self.signal)
                     break
             
-            if not signal_data:
-                _LOGGER.warning("Signal '%s' not found in API response", self.signal)
+            if not today_signal_data:
+                _LOGGER.warning("Today's data for signal '%s' not found", self.signal)
                 return result
             
-            # Get time ranges from signal data
-            time_ranges = signal_data.get("casy", [])
-            if not time_ranges:
+            # Parse time ranges from casy string
+            casy_string = today_signal_data.get("casy", "")
+            if not casy_string:
                 _LOGGER.warning("No time ranges found for signal '%s'", self.signal)
                 return result
             
-            _LOGGER.debug("Found %d time ranges for signal '%s'", len(time_ranges), self.signal)
+            _LOGGER.debug("Raw casy string: '%s'", casy_string)
             
-            # Parse time ranges
+            # Parse time ranges: "00:00-05:35; 06:30-08:55; ..."
             today_switches = []
             
+            # Split by semicolon and clean up
+            time_ranges = [r.strip() for r in casy_string.split(';') if r.strip()]
+            
             for time_range in time_ranges:
-                start_time_str = time_range.get("od")  # "from" time
-                end_time_str = time_range.get("do")    # "to" time
-                
-                if not start_time_str or not end_time_str:
-                    _LOGGER.warning("Invalid time range: %s", time_range)
+                if '-' not in time_range:
                     continue
                 
                 try:
+                    start_time_str, end_time_str = time_range.split('-', 1)
+                    start_time_str = start_time_str.strip()
+                    end_time_str = end_time_str.strip()
+                    
                     # Parse start time
                     start_hour, start_min = map(int, start_time_str.split(':'))
                     start_datetime = datetime.combine(today, time(start_hour, start_min))
                     
-                    # Parse end time
-                    end_hour, end_min = map(int, end_time_str.split(':'))
-                    
-                    # Handle midnight crossing (24:00 becomes next day 00:00)
-                    if end_hour == 24:
+                    # Parse end time - handle 24:00 as next day 00:00
+                    if end_time_str == "24:00":
                         end_datetime = datetime.combine(today + timedelta(days=1), time(0, 0))
-                    elif end_hour == 0 and start_hour > 12:  # Midnight crossing
-                        end_datetime = datetime.combine(today + timedelta(days=1), time(0, end_min))
                     else:
-                        end_datetime = datetime.combine(today, time(end_hour, end_min))
+                        end_hour, end_min = map(int, end_time_str.split(':'))
+                        if end_hour == 24:
+                            end_datetime = datetime.combine(today + timedelta(days=1), time(0, 0))
+                        else:
+                            end_datetime = datetime.combine(today, time(end_hour, end_min))
                     
                     # Add switches: ON at start, OFF at end
                     today_switches.append({
@@ -144,8 +142,7 @@ class CezHdoApi:
                                 end_datetime.strftime('%H:%M'))
                     
                 except (ValueError, TypeError) as err:
-                    _LOGGER.warning("Could not parse time range %s-%s: %s", 
-                                  start_time_str, end_time_str, err)
+                    _LOGGER.warning("Could not parse time range '%s': %s", time_range, err)
                     continue
             
             # Sort switches by time
@@ -167,7 +164,9 @@ class CezHdoApi:
             result["next_switch"] = next_switch
             result["current_period"] = "low_tariff" if current_state else "normal_tariff"
             
-            _LOGGER.debug("Current state: %s", "LOW TARIFF" if current_state else "NORMAL")
+            _LOGGER.debug("Current state: %s, Next switch: %s", 
+                         "LOW TARIFF" if current_state else "NORMAL TARIFF",
+                         next_switch.strftime('%H:%M') if next_switch else "None")
                 
         except (KeyError, ValueError, TypeError) as err:
             _LOGGER.error("Error parsing API response: %s", err)
