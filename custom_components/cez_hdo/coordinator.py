@@ -49,7 +49,7 @@ class CezHdoCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             #now = datetime.now()
             #current_data = self._compute_current_state(schedule_data, now)
 
-            return current_data
+            return schedule_data
 
         except Exception as err:
             _LOGGER.error("Error in coordinator update: %s", err)
