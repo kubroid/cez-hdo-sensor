@@ -26,14 +26,14 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
     """Validate the user input allows us to connect."""
     api = CezHdoApi(data[CONF_EAN], data.get(CONF_SIGNAL, DEFAULT_SIGNAL))
-    
+
     try:
         await api.async_get_data()
     except Exception as exc:
         _LOGGER.error("Cannot connect to CEZ API: %s", exc)
         raise CannotConnect from exc
-    
-    return {"title": f"CEZ HDO ({data[CONF_EAN]})"}  
+
+    return {"title": f"CEZ HDO ({data[CONF_EAN]})"}
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -46,7 +46,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Handle the initial step."""
         errors: dict[str, str] = {}
-        
+
         if user_input is not None:
             try:
                 info = await validate_input(self.hass, user_input)

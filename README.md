@@ -21,7 +21,22 @@
 
 ## 📦 Installation
 
-### 🚀 Quick Installation
+### 🏪 HACS Installation (Recommended)
+
+1. **Install HACS** if you haven't already: [HACS Installation Guide](https://hacs.xyz/docs/setup/download)
+2. **Add Custom Repository**:
+   - Go to HACS → Integrations
+   - Click the three dots menu (⋮) → Custom repositories
+   - Add repository URL: `https://github.com/kubroid/cez-hdo-sensor`
+   - Category: Integration
+   - Click "Add"
+3. **Install Integration**:
+   - Search for "CEZ HDO Sensor" in HACS
+   - Click "Download" → "Download"
+4. **Restart Home Assistant**
+5. **Add Integration**: Settings → Devices & Services → Add Integration → "CEZ HDO Sensor"
+
+### 🚀 Quick Installation (Manual)
 
 1. **Download archive**: [Download ZIP](https://github.com/kubroid/cez-hdo-sensor/archive/builtin-integration.zip)
 2. **Extract** to `/config/custom_components/` folder
@@ -70,7 +85,7 @@ After setup, two binary sensors will be created:
 - **States**:
   - `ON` - Low tariff active (HDO enabled) ⚡
   - `OFF` - Normal tariff (HDO disabled) ⚡
-- **Icon**: 
+- **Icon**:
   - `mdi:flash` when low tariff is active
   - `mdi:flash-outline` when normal tariff is active
 

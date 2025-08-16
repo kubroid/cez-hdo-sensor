@@ -8,7 +8,7 @@ CONF_SIGNAL = "signal"
 
 # Default values
 DEFAULT_NAME = "CEZ HDO"
-DEFAULT_SCAN_INTERVAL = 3600  # 1 hour in seconds
+DEFAULT_SCAN_INTERVAL = 30  # 30 second
 DEFAULT_SIGNAL = "a3b4dp01"
 
 # Available signals

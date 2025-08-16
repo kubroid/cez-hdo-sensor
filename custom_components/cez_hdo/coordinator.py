@@ -22,7 +22,7 @@ class CezHdoCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         self.api = CezHdoApi(config[CONF_EAN], config.get(CONF_SIGNAL, DEFAULT_SIGNAL))
         self.ean = config[CONF_EAN]
         self.signal = config.get(CONF_SIGNAL, DEFAULT_SIGNAL)
-        
+
         super().__init__(
             hass,
             _LOGGER,
@@ -38,19 +38,19 @@ class CezHdoCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             if not schedule_data:
                 _LOGGER.error("No data received from CEZ API - using error state")
                 return self._get_error_state("No data received from CEZ API")
-            
+
             # Check if we received error state from API
             if schedule_data.get("error_mode"):
-                _LOGGER.warning("API returned error state: %s", 
+                _LOGGER.warning("API returned error state: %s",
                               schedule_data.get("error_message", "Unknown error"))
                 return schedule_data  # Return error state as-is
-            
+
             # Compute current state based on schedule
-            now = datetime.now()
-            current_data = self._compute_current_state(schedule_data, now)
-            
+            #now = datetime.now()
+            #current_data = self._compute_current_state(schedule_data, now)
+
             return current_data
-            
+
         except Exception as err:
             _LOGGER.error("Error in coordinator update: %s", err)
             # Return error state instead of raising exception
@@ -77,42 +77,42 @@ class CezHdoCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "current_period": schedule_data.get("current_period", "normal_tariff"),
             "today_switches": schedule_data.get("today_switches", [])
         }
-        
+
         # If we have switches for today, recompute current state precisely
         switches = schedule_data.get("today_switches", [])
         if switches:
             current_state = False  # Default to normal tariff
             next_switch = None
-            
+
             for switch in switches:
                 switch_time = switch.get("time")
                 if not switch_time:
                     continue
-                
+
                 # Ensure switch_time is datetime object
                 if isinstance(switch_time, str):
                     try:
                         switch_time = datetime.fromisoformat(switch_time)
                     except ValueError:
                         continue
-                
+
                 if switch_time <= now:
                     current_state = switch["state"]
                 elif next_switch is None:
                     next_switch = switch_time
                     break
-            
+
             # Update result with computed values
             result["is_low_tariff"] = current_state
             result["next_switch"] = next_switch
             result["current_period"] = "low_tariff" if current_state else "normal_tariff"
-            
+
             _LOGGER.debug(
-                "HDO state computed: %s, Next switch: %s", 
+                "HDO state computed: %s, Next switch: %s",
                 "LOW TARIFF" if current_state else "NORMAL TARIFF",
                 next_switch.strftime('%H:%M') if next_switch else "None"
             )
-        
+
         return result
 
     async def async_shutdown(self) -> None:
