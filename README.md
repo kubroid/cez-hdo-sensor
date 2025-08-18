@@ -4,6 +4,8 @@
 
 🏠 **Built-in version** of CEZ HDO Sensor for Home Assistant - works without HACS and additional dependencies!
 
+[🇷🇺 Русская версия](README_RU.md) | [🇨🇿 Česká verze](README_CS.md)
+
 ## ✨ Features
 
 - 📡 **Signal Support**: a3b4dp01, a3b4dp02, a3b4dp06
